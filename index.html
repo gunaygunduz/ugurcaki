@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uğur Çakı | Portfolyo</title>
+    <meta name="description" content="Sanatçı Uğur Çakı'nın heykel ve seramik çalışmalarından oluşan dijital portfolyosu.">
+    <!-- Montserrat Font Integration -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Montserrat', 'sans-serif'],
+            },
+            fontWeight: {
+              light: '300',
+              semibold: '600',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        :root {
+            /* Colors */
+            --primary-gold: #E3BD33;
+            --accent-orange: #E2552D;
+            --dark-navy: #343148;
+            --off-white: #F4F5F0;
+        }
+        * {
+          cursor: crosshair;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            scroll-behavior: smooth;
+            background-color: var(--off-white);
+            color: var(--dark-navy);
+            overflow-x: hidden;
+        }
+        .font-heading {
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+        }
+        ::-webkit-scrollbar {
+          width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+          background: var(--off-white);
+        }
+        ::-webkit-scrollbar-thumb {
+          background: var(--dark-navy);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: var(--accent-orange);
+        }
+        
+        /* Custom Utility Classes */
+        .bg-navy { background-color: var(--dark-navy); }
+        .bg-gold { background-color: var(--primary-gold); }
+        .bg-orange { background-color: var(--accent-orange); }
+        .bg-light { background-color: var(--off-white); }
+        
+        .text-navy { color: var(--dark-navy); }
+        .text-gold { color: var(--primary-gold); }
+        .text-orange { color: var(--accent-orange); }
+        .text-light { color: var(--off-white); }
+
+        .border-gold { border-color: var(--primary-gold); }
+        .border-orange { border-color: var(--accent-orange); }
+        .border-navy { border-color: var(--dark-navy); }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.575.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "framer-motion": "https://esm.sh/framer-motion@^12.34.3",
+    "gsap": "https://esm.sh/gsap@3.12.5",
+    "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
