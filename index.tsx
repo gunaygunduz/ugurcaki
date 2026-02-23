@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { motion, AnimatePresence, useScroll, useSpring, useTransform, useInView } from 'framer-motion';
 import { 
@@ -9,11 +9,6 @@ import {
   Globe, 
   ChevronDown 
 } from 'lucide-react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-// Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger);
 
 // --- Types & Data ---
 interface Artwork {
@@ -227,7 +222,7 @@ const translations = {
     footer: "HEYKEL ARŞİVİ"
   },
   en: {
-    nav: { home: "Home", about: "About", gallery: "Exhibited Works", exhibitions: "Exhibitions", contact: "Contact" },
+    nav: { home: "Home", about: "About", gallery: "Gallery", exhibitions: "Exhibitions", contact: "Contact" },
     manifesto: ["ART IS THE PATH", "THAT LEADS TO THE", "ESSENCE OF LIFE."],
     heroSubtitle: "A JOURNEY EXPLORING THE BODY, THE OBJECT, AND TRANSFORMATION.",
     sectionLabels: { collection: "01 — COLLECTION", profile: "02 — THE PROFILE", exhibitions: "03 — EXHIBITIONS & AWARDS", contact: "04 — CONTACT" },
@@ -264,13 +259,13 @@ const translations = {
     footer: "SCULPTURAL ARCHIVE"
   },
   fr: {
-    nav: { home: "Accueil", about: "À Propos", gallery: "Œuvres Exposées", exhibitions: "Expositions", contact: "Contact" },
+    nav: { home: "Accueil", about: "À Propos", gallery: "Galerie", exhibitions: "Expositions", contact: "Contact" },
     manifesto: ["L'ART EST LE CHEMIN", "VERS L'ESSENCE", "DE LA VIE."],
     heroSubtitle: "UN VOYAGE EXPLORANT LE CORPS, L'OBJET ET LA TRANSFORMATION.",
     sectionLabels: { collection: "01 — COLLECTION", profile: "02 — LE PROFIL", exhibitions: "03 — EXPOSITIONS & PRIX", contact: "04 — CONTACT" },
     about: {
       title: "À PROPOS",
-      bio: "Né en 1974, l'artiste a terminé ses études en 2005 à la Faculté des Beaux-Arts DEU. En 2002, il a été invité à la Biennale du Caire et a reçu le Prix du Jury Jeunesse.",
+      bio: "Né in 1974, l'artiste a terminé ses études en 2005 à la Faculté des Beaux-Arts DEU. En 2002, il a été invité à la Biennale du Caire et a reçu le Prix du Jury Jeunesse.",
       highlights: "Lauréat de 10 prix prestigieux, il a été invité au Salon du Louvre en 2010 et a reçu le Prix Spécial. En 2013, il était l'invité d'honneur de la Biennale de New York.",
       studios: "L'artiste poursuit son travail dans ses ateliers d'Istanbul et d'Urla.",
       quoteTitle: "NOTES EN PASSANT",
@@ -601,60 +596,8 @@ const App = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const t = translations[lang as keyof typeof translations];
   
-  const heroRef = useRef<HTMLDivElement>(null);
-  const titleContainerRef = useRef<HTMLDivElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const separatorRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    if (!titleContainerRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Entrance Animation
-      const tl = gsap.timeline({ defaults: { ease: "expo.out", duration: 1.5 } });
-      
-      tl.from(".hero-line-inner", {
-        yPercent: 100,
-        stagger: 0.15,
-        delay: 0.5
-      })
-      .from(subtitleRef.current, {
-        opacity: 0,
-        y: 20,
-        duration: 1
-      }, "-=1")
-      .from(separatorRef.current, {
-        width: 0,
-        opacity: 0,
-        duration: 1.2
-      }, "-=0.8");
-
-      // Scroll Interaction
-      gsap.to(titleContainerRef.current, {
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-        y: 250,
-        opacity: 0.2,
-      });
-
-      gsap.to(subtitleRef.current, {
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-        y: 100,
-        opacity: 0,
-      });
-    }, heroRef);
-
-    return () => ctx.revert();
-  }, [lang]);
+  const { scrollY } = useScroll();
+  const stickyTextY = useTransform(scrollY, [0, 1000], [0, 800]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -666,7 +609,7 @@ const App = () => {
 
       <SmoothScrollWrapper>
         {/* Section: Home */}
-        <section id="home" ref={heroRef} className="h-screen w-full relative overflow-hidden flex items-center justify-center bg-[#343148]">
+        <section id="home" className="h-screen w-full relative overflow-hidden flex items-center justify-center bg-[#343148]">
           <div className="absolute inset-0 z-0">
             <img 
               src="https://static.wixstatic.com/media/784d0e_1528dca85e394fb79c6a09b2dd41231e~mv2.png" 
@@ -678,41 +621,29 @@ const App = () => {
 
           <FloatingSquares />
 
-          <div className="relative z-20 text-center px-6 max-w-5xl">
-            <div ref={titleContainerRef}>
-              <h1 className={`text-3xl md:text-[4.5rem] lg:text-[6.3rem] font-semibold uppercase tracking-[-0.02em] text-[#F4F5F0] drop-shadow-2xl mb-8
-                ${lang === 'tr' ? 'leading-[1.1]' : 'leading-[1.0]'}`}>
-                {t.manifesto.map((line, i) => {
-                  const upperLine = getUppercase(line, lang);
-                  const words = upperLine.split(' ');
-                  return (
-                    <span key={i} className="block overflow-hidden relative">
-                      <span className="hero-line-inner block">
-                        {words.map((word, wIdx) => {
-                          const isArtWord = word.includes("SANAT") || word === "ART" || word === "L'ART";
-                          return (
-                            <React.Fragment key={wIdx}>
-                              <span className={isArtWord ? "text-[#E3BD33]" : ""}>{word}</span>
-                              {wIdx < words.length - 1 ? ' ' : ''}
-                            </React.Fragment>
-                          );
-                        })}
-                      </span>
-                    </span>
-                  );
-                })}
-              </h1>
-            </div>
-            
-            <p ref={subtitleRef} className="text-[#F4F5F0]/70 text-xs md:text-sm tracking-[0.5em] font-light uppercase mt-4">
+          <motion.div 
+            style={{ y: stickyTextY }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5 }}
+            className="relative z-20 text-center px-6 max-w-5xl"
+          >
+            <h1 className={`text-4xl md:text-[5rem] lg:text-[7rem] font-semibold uppercase tracking-[-0.02em] text-[#F4F5F0] drop-shadow-2xl mb-8
+              ${lang === 'tr' ? 'leading-[1.0]' : 'leading-[0.9]'}`}>
+              {t.manifesto.map((line, i) => (
+                <span key={i} className="block last:text-[#E3BD33]">{getUppercase(line, lang)}</span>
+              ))}
+            </h1>
+            <p className="text-[#F4F5F0]/70 text-xs md:text-sm tracking-[0.5em] font-light uppercase mt-4">
               {getUppercase(t.heroSubtitle, lang)}
             </p>
-            
-            <div 
-              ref={separatorRef}
-              className="h-[1px] bg-[#E3BD33] mx-auto mt-12 opacity-60 w-[120px]" 
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: "120px" }}
+              transition={{ delay: 1, duration: 1.5 }}
+              className="h-[1px] bg-[#E3BD33] mx-auto mt-12 opacity-60" 
             />
-          </div>
+          </motion.div>
           
           <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30">
             <div className="w-px h-16 bg-gradient-to-b from-[#E3BD33] to-transparent animate-pulse" />
