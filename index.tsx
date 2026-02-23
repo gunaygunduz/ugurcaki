@@ -492,7 +492,7 @@ const GalleryItem = ({ art, index, lang }: { art: Artwork; index: number; lang: 
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-      className={`relative w-full flex flex-col items-center py-0.5 md:py-1 overflow-visible`}
+      className={`relative w-full flex flex-col items-center py-12 md:py-20 overflow-visible`}
     >
       <div className={`relative z-10 w-full max-w-7xl flex flex-col md:flex-row ${isLeft ? 'md:justify-start' : 'md:justify-end'} px-8 md:px-24 items-center gap-6`}>
         <div className={`w-full md:w-[45%] flex flex-col ${isLeft ? 'md:items-start' : 'md:items-end'}`}>
@@ -509,13 +509,13 @@ const GalleryItem = ({ art, index, lang }: { art: Artwork; index: number; lang: 
           </div>
           
           <div className={`mt-1 ${isLeft ? 'text-left' : 'text-right'} max-w-md`}>
-            <h4 className="text-xl md:text-2xl font-semibold tracking-[-0.02em] text-[#343148] leading-none mb-1">
+            <h4 className="text-xl md:text-2xl font-bold tracking-[-0.02em] text-[#343148] leading-none mb-1">
               {getTitleUppercase(art.title)}
             </h4>
-            <p className="text-[10px] text-[#343148]/60 font-light tracking-wide mb-1">
+            <p className="text-[10px] text-[#343148]/60 font-normal tracking-wide mb-1">
               {getUppercase(translatedMaterial, lang)}
             </p>
-            <div className={`flex items-center gap-4 text-[9px] text-[#E3BD33] font-light tracking-[0.2em] ${isLeft ? 'justify-start' : 'justify-end'}`}>
+            <div className={`flex items-center gap-4 text-[9px] text-[#E3BD33] font-normal tracking-[0.2em] ${isLeft ? 'justify-start' : 'justify-end'}`}>
               <span>{art.dimensions}</span>
               <span className="w-1 h-1 rounded-full bg-[#E3BD33]/30" />
               <span>{art.year}</span>
@@ -544,50 +544,90 @@ const Navbar = ({ lang, setLang }: { lang: string; setLang: (l: string) => void 
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-[100] px-8 py-10 flex justify-between items-center mix-blend-difference pointer-events-auto">
-      <div className="text-white text-xl font-semibold tracking-[0.4em] cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>UĞUR ÇAKI</div>
-      
-      <div className="hidden md:flex items-center space-x-10 uppercase text-[10px] tracking-[0.4em] font-semibold text-white">
-        {Object.entries(t.nav).map(([key, value]) => (
-          <button key={key} onClick={() => scrollTo(key)} className="hover:text-[#E3BD33] transition-colors">
-            {getUppercase(value, lang)}
-          </button>
-        ))}
-        <div className="flex space-x-4 border-l border-white/20 pl-8 ml-4">
-          {['tr', 'en', 'fr'].map((l) => (
-            <button 
-              key={l} 
-              onClick={() => setLang(l)} 
-              className={`transition-all ${lang === l ? 'text-[#E3BD33] font-semibold border-b border-[#E3BD33]' : 'opacity-40 hover:opacity-100'}`}
-            >
-              {getUppercase(l, lang)}
+    <>
+      <nav className="fixed top-0 left-0 w-full z-[100] px-8 py-10 flex justify-between items-center mix-blend-difference pointer-events-auto">
+        <div className="text-white text-xl font-bold tracking-[0.4em] cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>UĞUR ÇAKI</div>
+        
+        <div className="hidden md:flex items-center space-x-10 uppercase text-[10px] tracking-[0.4em] font-bold text-white">
+          {Object.entries(t.nav).map(([key, value]) => (
+            <button key={key} onClick={() => scrollTo(key)} className="hover:text-[#E3BD33] transition-colors">
+              {getUppercase(value, lang)}
             </button>
           ))}
+          <div className="flex space-x-4 border-l border-white/20 pl-8 ml-4">
+            {['tr', 'en', 'fr'].map((l) => (
+              <button 
+                key={l} 
+                onClick={() => setLang(l)} 
+                className={`transition-all ${lang === l ? 'text-[#E3BD33] font-bold border-b border-[#E3BD33]' : 'opacity-40 hover:opacity-100'}`}
+              >
+                {getUppercase(l, lang)}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? <X size={32} /> : <Menu size={32} />}
-      </button>
+        <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? <X size={32} /> : <Menu size={32} />}
+        </button>
+      </nav>
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 bg-[#343148] flex flex-col justify-center items-center space-y-10 uppercase tracking-widest z-[101]"
-          >
-            <button className="absolute top-10 right-8 text-white" onClick={() => setIsOpen(false)}><X size={40} /></button>
-            {Object.entries(t.nav).map(([key, value]) => (
-              <button key={key} onClick={() => scrollTo(key)} className="text-4xl text-white font-semibold hover:text-[#E3BD33] transition-colors">
-                {getUppercase(value, lang)}
+          <>
+            {/* Darkened Overlay to create the "Paspartu" look */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-black/40 z-[105] backdrop-blur-sm"
+            />
+            
+            {/* Menu Card with Paspartu (m-6) and inner black border */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-6 bg-[#F4F5F0] flex flex-col justify-center items-center space-y-10 uppercase tracking-widest z-[110] shadow-2xl overflow-hidden"
+            >
+              {/* Inner black border (frame) */}
+              <div className="absolute inset-4 border border-black pointer-events-none" />
+              
+              <button className="absolute top-10 right-8 text-[#343148] z-[111]" onClick={() => setIsOpen(false)}>
+                <X size={32} />
               </button>
-            ))}
-          </motion.div>
+              
+              <div className="flex flex-col items-center space-y-6 relative z-[111]">
+                {Object.entries(t.nav).map(([key, value]) => (
+                  <button 
+                    key={key} 
+                    onClick={() => scrollTo(key)} 
+                    className="text-2xl text-[#343148] font-regular hover:text-[#E3BD33] transition-colors"
+                  >
+                    {getUppercase(value, lang)}
+                  </button>
+                ))}
+              </div>
+
+              {/* Mobile Language Switcher */}
+              <div className="flex space-x-6 pt-10 border-t border-[#343148]/10 w-2/3 justify-center relative z-[111]">
+                {['tr', 'en', 'fr'].map((l) => (
+                  <button 
+                    key={l} 
+                    onClick={() => { setLang(l); setIsOpen(false); }} 
+                    className={`text-xs tracking-[0.4em] transition-all pb-2 ${lang === l ? 'text-[#E3BD33] font-bold border-b-2 border-[#E3BD33]' : 'text-[#343148]/40'}`}
+                  >
+                    {getUppercase(l, lang)}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 };
 
@@ -604,7 +644,7 @@ const App = () => {
   }, [lang]);
   
   return (
-    <div className="bg-[#F4F5F0] text-[#343148] min-h-screen selection:bg-[#E2552D] selection:text-white">
+    <div className="bg-[#F4F5F0] text-[#343148] min-h-screen selection:bg-[#E2552D] selection:text-white font-normal">
       <Navbar lang={lang} setLang={setLang} />
 
       <SmoothScrollWrapper>
@@ -628,13 +668,13 @@ const App = () => {
             transition={{ duration: 1.5 }}
             className="relative z-20 text-center px-6 max-w-5xl"
           >
-            <h1 className={`text-4xl md:text-[5rem] lg:text-[7rem] font-semibold uppercase tracking-[-0.02em] text-[#F4F5F0] drop-shadow-2xl mb-8
+            <h1 className={`text-4xl md:text-[5rem] lg:text-[7rem] font-bold uppercase tracking-[-0.02em] text-[#F4F5F0] drop-shadow-2xl mb-8
               ${lang === 'tr' ? 'leading-[1.0]' : 'leading-[0.9]'}`}>
               {t.manifesto.map((line, i) => (
                 <span key={i} className="block last:text-[#E3BD33]">{getUppercase(line, lang)}</span>
               ))}
             </h1>
-            <p className="text-[#F4F5F0]/70 text-xs md:text-sm tracking-[0.5em] font-light uppercase mt-4">
+            <p className="text-[#F4F5F0]/70 text-xs md:text-sm tracking-[0.5em] font-normal uppercase mt-4">
               {getUppercase(t.heroSubtitle, lang)}
             </p>
             <motion.div 
@@ -659,15 +699,15 @@ const App = () => {
                transition={{ duration: 1.2 }}
                className="max-w-4xl"
             >
-              <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.7em] mb-4 block font-semibold">{getUppercase(t.sectionLabels.collection, lang)}</span>
-              <h2 className="text-[36pt] md:text-[50pt] font-semibold mb-8 text-[#343148] tracking-[-0.02em] leading-none uppercase">
+              <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.7em] mb-4 block font-bold">{getUppercase(t.sectionLabels.collection, lang)}</span>
+              <h2 className="text-[36pt] md:text-[50pt] font-bold mb-8 text-[#343148] tracking-[-0.02em] leading-none uppercase">
                  {t.gallery.titleLines.map((line, idx) => (
                    <span key={idx} className="block">{getUppercase(line, lang)}</span>
                  ))}
               </h2>
               <div className="flex items-start gap-8">
                 <div className="w-12 h-[1px] bg-[#E3BD33] mt-4 flex-shrink-0" />
-                <p className="text-xl md:text-2xl text-[#343148]/70 font-light leading-relaxed max-w-2xl italic">
+                <p className="text-xl md:text-2xl text-[#343148]/70 font-normal leading-relaxed max-w-2xl italic">
                   {t.gallery.intro}
                 </p>
               </div>
@@ -682,7 +722,7 @@ const App = () => {
         </section>
 
         {/* Section: Public Works */}
-        <section id="public-works" className="py-24 md:py-48 bg-[#F4F5F0] relative overflow-hidden border-t border-[#343148]/5 px-4 md:px-8 lg:px-12">
+        <section id="public-works" className="py-24 md:py-48 bg-[#F4F5F0] relative overflow-hidden border-t border-[#343148]/5 px-4 md:px-8 lg:grid lg:px-12">
           <div className="w-full max-w-[1600px] mx-auto relative z-10 border border-[#343148]/20 p-8 md:p-16 lg:p-24 rounded-sm">
              <div className="grid md:grid-cols-2 gap-8 md:gap-24 items-center">
                 <motion.div 
@@ -690,10 +730,10 @@ const App = () => {
                    whileInView={{ opacity: 1, x: 0 }}
                    transition={{ duration: 1.2 }}
                 >
-                   <h3 className="text-[36pt] md:text-[50pt] font-semibold mb-12 text-[#343148] leading-[0.85] tracking-[-0.02em] uppercase">{t.gallery.publicWorksTitle.map((word, idx)=>(<span key={idx} className="block">{getUppercase(word, lang)}</span>))}</h3>
+                   <h3 className="text-[36pt] md:text-[50pt] font-bold mb-12 text-[#343148] leading-[0.85] tracking-[-0.02em] uppercase">{t.gallery.publicWorksTitle.map((word, idx)=>(<span key={idx} className="block">{getUppercase(word, lang)}</span>))}</h3>
                    <div className="flex items-start gap-6">
                       <div className="w-12 h-[1px] bg-[#E3BD33] mt-4 flex-shrink-0" />
-                      <p className="text-lg md:text-xl text-[#343148]/70 font-light leading-relaxed italic">
+                      <p className="text-lg md:text-xl text-[#343148]/70 font-normal leading-relaxed italic">
                         {t.gallery.publicWorksText}
                       </p>
                    </div>
@@ -733,7 +773,7 @@ const App = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, amount: 0.5 }}
               transition={{ delay: 0.5, duration: 1.2 }}
-              className="font-light leading-tight tracking-[0.3em] uppercase text-[20pt]"
+              className="font-normal leading-tight tracking-[0.3em] uppercase text-[20pt]"
               style={{ color: '#F4F5F0' }}
             >
               {getUppercase(t.interlude, lang)}
@@ -751,17 +791,17 @@ const App = () => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, delay: 0.2 }}>
-              <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-semibold">{getUppercase(t.sectionLabels.profile, lang)}</span>
-              <h2 className="text-[36pt] md:text-[50pt] font-semibold mb-12 text-[#343148] tracking-[-0.02em] leading-none">{getUppercase(t.about.title, lang)}</h2>
-              <div className="space-y-8 text-xl font-light leading-relaxed text-[#343148]/80">
+              <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-bold">{getUppercase(t.sectionLabels.profile, lang)}</span>
+              <h2 className="text-[36pt] md:text-[50pt] font-bold mb-12 text-[#343148] tracking-[-0.02em] leading-none">{getUppercase(t.about.title, lang)}</h2>
+              <div className="space-y-8 text-xl font-normal leading-relaxed text-[#343148]/80">
                 <p>{t.about.bio}</p>
                 <p>{t.about.highlights}</p>
                 <p className="text-sm text-[#343148]/40 italic tracking-widest uppercase">{t.about.studios}</p>
               </div>
               
               <div className="mt-20 pt-16 border-t border-[#343148]/10 italic relative">
-                 <h4 className="text-[11px] uppercase tracking-[0.5em] text-[#E3BD33] mb-8 font-semibold">{getUppercase(t.about.quoteTitle, lang)}</h4>
-                 <p className="text-4xl md:text-5xl font-semibold tracking-[-0.02em] text-[#343148] leading-tight">
+                 <h4 className="text-[11px] uppercase tracking-[0.5em] text-[#E3BD33] mb-8 font-bold">{getUppercase(t.about.quoteTitle, lang)}</h4>
+                 <p className="text-4xl md:text-5xl font-bold tracking-[-0.02em] text-[#343148] leading-tight">
                    {t.about.quote}
                  </p>
                  <div className="absolute top-16 left-0 w-12 h-[2px] bg-[#E3BD33]" />
@@ -775,32 +815,32 @@ const App = () => {
           <div className="max-w-7xl mx-auto">
              <div className="grid md:grid-cols-2 gap-24 mb-32">
                 <div>
-                   <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-semibold">{getUppercase(t.sectionLabels.exhibitions, lang)}</span>
-                   <h3 className="text-[36pt] md:text-[50pt] font-semibold mb-12 text-[#343148]">{getUppercase(t.exhibitions.awards, lang)}</h3>
+                   <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-bold">{getUppercase(t.sectionLabels.exhibitions, lang)}</span>
+                   <h3 className="text-[36pt] md:text-[50pt] font-bold mb-12 text-[#343148] tracking-[-0.02em]">{getUppercase(t.exhibitions.awards, lang)}</h3>
                    <div className="space-y-8 max-h-[700px] overflow-y-auto pr-4 scrollbar-custom">
                       {awardsData.slice().reverse().map((award, idx) => (
                         <div key={idx} className="border-b border-[#343148]/10 pb-6">
-                           <span className="text-[#E2552D] font-semibold text-lg">{award.year}</span>
-                           <h4 className="text-xl md:text-2xl font-semibold tracking-[-0.02em] mt-2 text-[#343148] leading-tight">{getTitleUppercase(award.title)}</h4>
-                           <p className="text-[#343148]/50 uppercase tracking-widest text-[9px] mt-2 font-light">{getTitleUppercase(award.location)}</p>
+                           <span className="text-[#E2552D] font-bold text-lg">{award.year}</span>
+                           <h4 className="text-xl md:text-2xl font-bold tracking-[-0.02em] mt-2 text-[#343148] leading-tight">{getTitleUppercase(award.title)}</h4>
+                           <p className="text-[#343148]/50 uppercase tracking-widest text-[9px] mt-2 font-normal">{getTitleUppercase(award.location)}</p>
                         </div>
                       ))}
                    </div>
                 </div>
                 <div className="pt-0 md:pt-14">
-                   <h3 className="text-[36pt] md:text-[50pt] font-semibold mb-12 text-[#343148]">{getUppercase(t.nav.exhibitions, lang)}</h3>
+                   <h3 className="text-[36pt] md:text-[50pt] font-bold mb-12 text-[#343148] tracking-[-0.02em]">{getUppercase(t.nav.exhibitions, lang)}</h3>
                    <ul className="space-y-10">
                       <li className="flex justify-between items-end border-b border-[#343148]/5 pb-6">
-                         <span className="text-2xl font-semibold tracking-[-0.02em]">{getTitleUppercase("Saatchi Gallery, London")}</span>
-                         <b className="text-[#E3BD33] font-semibold">2012</b>
+                         <span className="text-2xl font-bold tracking-[-0.02em]">{getTitleUppercase("Saatchi Gallery, London")}</span>
+                         <b className="text-[#E3BD33] font-bold">2012</b>
                       </li>
                       <li className="flex justify-between items-end border-b border-[#343148]/5 pb-6">
-                         <span className="text-2xl font-semibold tracking-[-0.02em]">{getTitleUppercase("Elite Art Monaco")}</span>
-                         <b className="text-[#E3BD33] font-semibold">2010</b>
+                         <span className="text-2xl font-bold tracking-[-0.02em]">{getTitleUppercase("Elite Art Monaco")}</span>
+                         <b className="text-[#E3BD33] font-bold">2010</b>
                       </li>
                       <li className="flex justify-between items-end border-b border-[#343148]/5 pb-6">
-                         <span className="text-2xl font-semibold tracking-[-0.02em]">{getTitleUppercase("New York Biennale")}</span>
-                         <b className="text-[#E3BD33] font-semibold">2013</b>
+                         <span className="text-2xl font-bold tracking-[-0.02em]">{getTitleUppercase("New York Biennale")}</span>
+                         <b className="text-[#E3BD33] font-bold">2013</b>
                       </li>
                    </ul>
                 </div>
@@ -811,7 +851,7 @@ const App = () => {
                   onClick={() => setIsHistoryOpen(!isHistoryOpen)}
                   className="w-full flex items-center justify-between group py-4"
                 >
-                  <h3 className="text-3xl md:text-4xl font-semibold tracking-[-0.02em] text-[#343148] group-hover:text-[#E3BD33] transition-colors">
+                  <h3 className="text-3xl md:text-4xl font-bold tracking-[-0.02em] text-[#343148] group-hover:text-[#E3BD33] transition-colors">
                     {isHistoryOpen ? getUppercase(t.exhibitions.hideHistory, lang) : getUppercase(t.exhibitions.viewFullHistory, lang)}
                   </h3>
                   <div className={`p-4 rounded-full border border-[#343148]/10 group-hover:border-[#E3BD33] transition-all ${isHistoryOpen ? 'rotate-180' : ''}`}>
@@ -831,10 +871,10 @@ const App = () => {
                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16 py-20">
                         {exhibitionHistoryData.slice().reverse().map((group, idx) => (
                           <div key={idx} className="space-y-6">
-                            <h4 className="text-3xl font-semibold text-[#E3BD33] border-b border-[#E3BD33]/30 pb-4 inline-block">{group.year}</h4>
+                            <h4 className="text-3xl font-bold text-[#E3BD33] border-b border-[#E3BD33]/30 pb-4 inline-block">{group.year}</h4>
                             <ul className="space-y-4">
                               {group.events.map((event, eIdx) => (
-                                <li key={eIdx} className="text-[#343148]/80 text-xs md:text-sm font-light leading-relaxed">• {event}</li>
+                                <li key={eIdx} className="text-[#343148]/80 text-xs md:text-sm font-normal leading-relaxed">• {event}</li>
                               ))}
                             </ul>
                           </div>
@@ -853,15 +893,15 @@ const App = () => {
           
           <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 relative z-20">
             <div>
-              <span className="text-[#E3BD33] text-[11px] uppercase tracking-[0.8em] mb-8 block font-semibold">{getUppercase(t.sectionLabels.contact, lang)}</span>
-              <h2 className="text-[36pt] md:text-[50pt] font-semibold mb-16 tracking-[-0.02em] leading-none">{getUppercase(t.contact.title, lang)}</h2>
+              <span className="text-[#E3BD33] text-[11px] uppercase tracking-[0.8em] mb-8 block font-bold">{getUppercase(t.sectionLabels.contact, lang)}</span>
+              <h2 className="text-[36pt] md:text-[50pt] font-bold mb-16 tracking-[-0.02em] leading-none">{getUppercase(t.contact.title, lang)}</h2>
               <div className="space-y-12">
                 <div>
-                  <p className="text-3xl md:text-4xl font-semibold text-[#E3BD33] mb-4">{t.contact.manager}</p>
+                  <p className="text-3xl md:text-4xl font-bold text-[#E3BD33] mb-4">{t.contact.manager}</p>
                 </div>
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-[0.6em] opacity-40 mb-6 font-light">{getUppercase(t.contact.galleries, lang)}</h4>
-                  <div className="text-xl font-light space-y-4 opacity-80 uppercase tracking-widest">
+                  <h4 className="text-[10px] uppercase tracking-[0.6em] opacity-40 mb-6 font-normal">{getUppercase(t.contact.galleries, lang)}</h4>
+                  <div className="text-xl font-normal space-y-4 opacity-80 uppercase tracking-widest">
                     <p>{getTitleUppercase("Miart Gallery — London")}</p>
                     <p>{getTitleUppercase("Caresse Art — Bodrum")}</p>
                     <p>{getTitleUppercase("Bap Gallery — Paris")}</p>
@@ -877,15 +917,15 @@ const App = () => {
             <div className="bg-white/5 p-12 md:p-16 rounded-sm border border-white/10 shadow-2xl backdrop-blur-lg">
               <form className="space-y-12" onSubmit={e => e.preventDefault()}>
                 <div className="relative group">
-                  <input placeholder={getUppercase(t.contact.placeholders.name, lang)} className="w-full bg-transparent border-b border-white/20 py-6 outline-none focus:border-[#E3BD33] text-sm uppercase tracking-widest placeholder-white/20 transition-all font-light" />
+                  <input placeholder={getUppercase(t.contact.placeholders.name, lang)} className="w-full bg-transparent border-b border-white/20 py-6 outline-none focus:border-[#E3BD33] text-sm uppercase tracking-widest placeholder-white/20 transition-all font-normal" />
                 </div>
                 <div className="relative group">
-                  <input placeholder={getUppercase(t.contact.placeholders.email, lang)} className="w-full bg-transparent border-b border-white/20 py-6 outline-none focus:border-[#E3BD33] text-sm uppercase tracking-widest placeholder-white/20 transition-all font-light" />
+                  <input placeholder={getUppercase(t.contact.placeholders.email, lang)} className="w-full bg-transparent border-b border-white/20 py-6 outline-none focus:border-[#E3BD33] text-sm uppercase tracking-widest placeholder-white/20 transition-all font-normal" />
                 </div>
                 <div className="relative group">
-                  <textarea placeholder={getUppercase(t.contact.placeholders.message, lang)} rows={4} className="w-full bg-transparent border-b border-white/20 py-6 outline-none focus:border-[#E3BD33] text-sm uppercase tracking-widest resize-none placeholder-white/20 transition-all font-light" />
+                  <textarea placeholder={getUppercase(t.contact.placeholders.message, lang)} rows={4} className="w-full bg-transparent border-b border-white/20 py-6 outline-none focus:border-[#E3BD33] text-sm uppercase tracking-widest resize-none placeholder-white/20 transition-all font-normal" />
                 </div>
-                <button className="group w-full bg-[#E3BD33] text-[#343148] font-semibold py-8 text-xl flex items-center justify-center gap-6 hover:bg-[#E2552D] hover:text-white transition-all shadow-xl">
+                <button className="group w-full bg-[#E3BD33] text-[#343148] font-bold py-8 text-xl flex items-center justify-center gap-6 hover:bg-[#E2552D] hover:text-white transition-all shadow-xl">
                   <span>{getUppercase(t.contact.formSend, lang)}</span>
                   <ArrowRight className="group-hover:translate-x-3 transition-transform" />
                 </button>
@@ -894,7 +934,7 @@ const App = () => {
           </div>
         </section>
 
-        <footer className="py-20 text-center text-[10px] tracking-[1.5em] text-white/10 uppercase bg-[#343148] border-t border-white/5 font-light">
+        <footer className="py-20 text-center text-[10px] tracking-[1.5em] text-white/10 uppercase bg-[#343148] border-t border-white/5 font-normal">
            &copy; {new Date().getFullYear()} {getUppercase("UĞUR ÇAKI", lang)} — {getUppercase(t.footer, lang)}
         </footer>
       </SmoothScrollWrapper>
