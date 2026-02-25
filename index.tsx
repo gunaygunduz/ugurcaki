@@ -208,7 +208,7 @@ const translations = {
       solo: "Kişisel Sergiler",
       awards: "Ödüller",
       history: "Sergi Geçmişi",
-      viewFullHistory: "Tüm Geçmişi Görüntüle",
+      viewFullHistory: "Geçmiş Sergiler",
       hideHistory: "Gizle"
     },
     contact: {
@@ -251,7 +251,7 @@ const translations = {
     contact: {
       title: "CONTACT",
       manager: "Manager: Beste Tekelioğlu",
-      galleries: "Galleries",
+      galleries: "Galeriler",
       formSend: "Send",
       placeholders: { name: "NAME", email: "EMAIL", message: "MESSAGE" }
     },
@@ -265,7 +265,7 @@ const translations = {
     sectionLabels: { collection: "01 — COLLECTION", profile: "02 — LE PROFIL", exhibitions: "03 — EXPOSITIONS & PRIX", contact: "04 — CONTACT" },
     about: {
       title: "À PROPOS",
-      bio: "Né in 1974, l'artiste a terminé ses études en 2005 à la Faculté des Beaux-Arts DEU. En 2002, il a été invité à la Biennale du Caire et a reçu le Prix du Jury Jeunesse.",
+      bio: "Né in 1974, l'artiste a terminé ses études en 2005 à la Faculté des Beaux-Arts DEU. En 2002, il a été invité à la Biennale du Caire and a reçu le Prix du Jury Jeunesse.",
       highlights: "Lauréat de 10 prix prestigieux, il a été invité au Salon du Louvre en 2010 et a reçu le Prix Spécial. En 2013, il était l'invité d'honneur de la Biennale de New York.",
       studios: "L'artiste poursuit son travail dans ses ateliers d'Istanbul et d'Urla.",
       quoteTitle: "NOTES EN PASSANT",
@@ -325,11 +325,11 @@ const FloatingSquares = () => {
   }, []);
 
   const squares = useMemo(() => {
-    return Array.from({ length: 25 }).map((_, i) => {
-      const size = 40 + Math.random() * 40;
+    return Array.from({ length: 20  }).map((_, i) => {
+      const size = 20 + Math.random() * 35;
       const initialX = Math.random() * 100;
       const initialY = Math.random() * 100;
-      const speed = 1.5 + Math.random() * 1;
+      const speed = 1.6 + Math.random() * 1;
       const opacity = 0.1 + Math.random() * 0.4;
       
       return { id: i, size, initialX, initialY, speed, opacity };
@@ -345,7 +345,16 @@ const FloatingSquares = () => {
   );
 };
 
-const SquareItem = ({ sq, mousePos }: { sq: any, mousePos: { x: number, y: number } }) => {
+interface SquareData {
+  id: number;
+  size: number;
+  initialX: number;
+  initialY: number;
+  speed: number;
+  opacity: number;
+}
+
+const SquareItem: React.FC<{ sq: SquareData, mousePos: { x: number, y: number } }> = ({ sq, mousePos }) => {
   const squareRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: sq.initialX, y: sq.initialY });
 
@@ -480,7 +489,13 @@ const SmoothScrollWrapper = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const GalleryItem = ({ art, index, lang }: { art: Artwork; index: number; lang: string }) => {
+interface GalleryItemProps {
+  art: Artwork;
+  index: number;
+  lang: string;
+}
+
+const GalleryItem: React.FC<GalleryItemProps> = ({ art, index, lang }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
   const isLeft = index % 2 === 0;
@@ -492,10 +507,10 @@ const GalleryItem = ({ art, index, lang }: { art: Artwork; index: number; lang: 
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-      className={`relative w-full flex flex-col items-center py-12 md:py-20 overflow-visible`}
+      className="relative w-full"
     >
-      <div className={`relative z-10 w-full max-w-7xl flex flex-col md:flex-row ${isLeft ? 'md:justify-start' : 'md:justify-end'} px-8 md:px-24 items-center gap-6`}>
-        <div className={`w-full md:w-[45%] flex flex-col ${isLeft ? 'md:items-start' : 'md:items-end'}`}>
+      <div className={`flex flex-col md:flex-row items-center gap-4 md:gap-8 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+        <div className="w-full md:w-3/5">
           <div className="overflow-hidden bg-[#CDC6BD]/10 group shadow-2xl rounded-sm">
             <motion.img 
               whileHover={{ scale: 1.05 }}
@@ -507,19 +522,19 @@ const GalleryItem = ({ art, index, lang }: { art: Artwork; index: number; lang: 
               }}
             />
           </div>
-          
-          <div className={`mt-1 ${isLeft ? 'text-left' : 'text-right'} max-w-md`}>
-            <h4 className="text-xl md:text-2xl font-bold tracking-[-0.02em] text-[#343148] leading-none mb-1">
-              {getTitleUppercase(art.title)}
-            </h4>
-            <p className="text-[10px] text-[#343148]/60 font-normal tracking-wide mb-1">
-              {getUppercase(translatedMaterial, lang)}
-            </p>
-            <div className={`flex items-center gap-4 text-[9px] text-[#E3BD33] font-normal tracking-[0.2em] ${isLeft ? 'justify-start' : 'justify-end'}`}>
-              <span>{art.dimensions}</span>
-              <span className="w-1 h-1 rounded-full bg-[#E3BD33]/30" />
-              <span>{art.year}</span>
-            </div>
+        </div>
+        
+        <div className={`w-full md:w-2/5 flex flex-col justify-center ${isLeft ? 'md:items-start text-left' : 'md:items-end text-right'}`}>
+          <h4 className="text-lg md:text-xl font-bold tracking-[-0.02em] text-[#343148] leading-tight mb-1">
+            {getTitleUppercase(art.title)}
+          </h4>
+          <p className="text-[10px] md:text-[11px] text-[#343148]/60 font-medium tracking-wide mb-1">
+            {getUppercase(translatedMaterial, lang)}
+          </p>
+          <div className={`flex items-center gap-3 md:gap-4 text-[10px] md:text-[11px] text-[#E3BD33] font-normal tracking-[0.1em] ${isLeft ? 'justify-start' : 'justify-end'}`}>
+            <span>{art.dimensions}</span>
+            <span className="w-1 h-1 rounded-full bg-[#E3BD33]/30" />
+            <span>{art.year}</span>
           </div>
         </div>
       </div>
@@ -549,7 +564,7 @@ const Navbar = ({ lang, setLang }: { lang: string; setLang: (l: string) => void 
         <div className="text-white text-xl font-bold tracking-[0.4em] cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>UĞUR ÇAKI</div>
         
         <div className="hidden md:flex items-center space-x-10 uppercase text-[10px] tracking-[0.4em] font-bold text-white">
-          {Object.entries(t.nav).map(([key, value]) => (
+          {Object.entries(t.nav).filter(([key]) => key !== 'home').map(([key, value]) => (
             <button key={key} onClick={() => scrollTo(key)} className="hover:text-[#E3BD33] transition-colors">
               {getUppercase(value, lang)}
             </button>
@@ -604,7 +619,7 @@ const Navbar = ({ lang, setLang }: { lang: string; setLang: (l: string) => void 
                   <button 
                     key={key} 
                     onClick={() => scrollTo(key)} 
-                    className="text-2xl text-[#343148] font-regular hover:text-[#E3BD33] transition-colors"
+                    className="text-[18px] text-[#343148] font-regular hover:text-[#E3BD33] transition-colors"
                   >
                     {getUppercase(value, lang)}
                   </button>
@@ -674,7 +689,7 @@ const App = () => {
                 <span key={i} className="block last:text-[#E3BD33]">{getUppercase(line, lang)}</span>
               ))}
             </h1>
-            <p className="text-[#F4F5F0]/70 text-xs md:text-sm tracking-[0.5em] font-normal uppercase mt-4">
+            <p className="text-[#F4F5F0]/70 text-[18px] tracking-[0.5em] font-medium uppercase mt-4">
               {getUppercase(t.heroSubtitle, lang)}
             </p>
             <motion.div 
@@ -714,7 +729,7 @@ const App = () => {
             </motion.div>
           </div>
 
-          <div className="flex flex-col w-full relative">
+          <div className="grid grid-cols-1 w-full max-w-7xl mx-auto px-8 md:px-24 gap-y-16 md:gap-y-32 relative">
                {artworks.map((art, i) => (
                  <GalleryItem key={i} art={art} index={i} lang={lang} />
                ))}
@@ -723,17 +738,20 @@ const App = () => {
 
         {/* Section: Public Works */}
         <section id="public-works" className="py-24 md:py-48 bg-[#F4F5F0] relative overflow-hidden border-t border-[#343148]/5 px-4 md:px-8 lg:grid lg:px-12">
-          <div className="w-full max-w-[1600px] mx-auto relative z-10 border border-[#343148]/20 p-8 md:p-16 lg:p-24 rounded-sm">
+          <div className="w-full max-w-[1600px] mx-auto relative z-10 border border-[#343148]/20 p-6 md:p-16 lg:p-24 rounded-sm">
              <div className="grid md:grid-cols-2 gap-8 md:gap-24 items-center">
                 <motion.div 
                    initial={{ opacity: 0, x: -50 }}
                    whileInView={{ opacity: 1, x: 0 }}
                    transition={{ duration: 1.2 }}
+                   className="flex flex-col items-center md:items-start"
                 >
-                   <h3 className="text-[36pt] md:text-[50pt] font-bold mb-12 text-[#343148] leading-[0.85] tracking-[-0.02em] uppercase">{t.gallery.publicWorksTitle.map((word, idx)=>(<span key={idx} className="block">{getUppercase(word, lang)}</span>))}</h3>
-                   <div className="flex items-start gap-6">
-                      <div className="w-12 h-[1px] bg-[#E3BD33] mt-4 flex-shrink-0" />
-                      <p className="text-lg md:text-xl text-[#343148]/70 font-normal leading-relaxed italic">
+                   <h3 className="text-[28pt] md:text-[40pt] font-bold mb-12 text-[#343148] leading-[0.85] tracking-[-0.02em] uppercase text-center md:text-left">
+                     {t.gallery.publicWorksTitle.map((word, idx)=>(<span key={idx} className="block">{getUppercase(word, lang)}</span>))}
+                   </h3>
+                   <div className="flex flex-col items-center md:flex-row md:items-start gap-6">
+                      <div className="w-12 h-[1px] bg-[#E3BD33] md:mt-4 flex-shrink-0" />
+                      <p className="text-lg md:text-xl text-[#343148]/70 font-normal leading-relaxed italic text-center md:text-left">
                         {t.gallery.publicWorksText}
                       </p>
                    </div>
@@ -753,17 +771,32 @@ const App = () => {
         {/* Section: Interlude */}
         <section className="relative h-screen w-full bg-[#343148] overflow-hidden flex items-center justify-center">
           <motion.div 
-            initial={{ scale: 1.2, opacity: 0, filter: 'blur(20px)' }}
-            whileInView={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, filter: 'blur(20px)' }}
+            whileInView={{ opacity: 1, filter: 'blur(0px)' }}
             viewport={{ once: false, amount: 0.1 }}
-            transition={{ duration: 1.8, ease: [0.33, 1, 0.68, 1] }}
-            className="absolute inset-0 w-full h-full"
+            transition={{ duration: 1.2 }}
+            className="absolute inset-0 w-full h-full flex overflow-hidden"
           >
-            <img 
-              src="https://static.wixstatic.com/media/784d0e_11e4093fab1447be99e54c2c8d664a8c~mv2.png" 
-              className="w-full h-full object-cover"
-              alt="Interlude Artwork"
-            />
+            <motion.div 
+              className="flex h-full w-max"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ 
+                duration: 40, 
+                ease: "linear", 
+                repeat: Infinity 
+              }}
+            >
+              <img 
+                src="https://static.wixstatic.com/media/784d0e_11e4093fab1447be99e54c2c8d664a8c~mv2.png" 
+                className="h-full w-auto max-w-none object-cover"
+                alt="Interlude Artwork Part 1"
+              />
+              <img 
+                src="https://static.wixstatic.com/media/784d0e_11e4093fab1447be99e54c2c8d664a8c~mv2.png" 
+                className="h-full w-auto max-w-none object-cover"
+                alt="Interlude Artwork Part 2"
+              />
+            </motion.div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#343148] via-transparent to-transparent opacity-60" />
           </motion.div>
           
