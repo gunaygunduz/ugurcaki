@@ -121,9 +121,10 @@ const artworks: Artwork[] = [
 ];
 
 const publicWorksImages = [
-  "https://static.wixstatic.com/media/784d0e_0352728622a247798a3139cc9e2f3832~mv2.png",
-  "https://static.wixstatic.com/media/784d0e_6459cf192f0c48108df394c15acd307a~mv2.png",
-  "https://static.wixstatic.com/media/784d0e_ef0c87b00b0449398ddf7faa7186ce45~mv2.png"
+  "https://static.wixstatic.com/media/784d0e_3f221ef137bf489b941f9cc33379b1f3~mv2.webp",
+  "https://static.wixstatic.com/media/784d0e_9b314ab36ae1428abefb5d8f5afefb55~mv2.webp",
+  "https://static.wixstatic.com/media/784d0e_248dfaab3e0a4e568e5f0f6167a77361~mv2.webp",
+  "https://static.wixstatic.com/media/784d0e_6cd413bdf61a43d1967b622e4d924d22~mv2.webp"
 ];
 
 const awardsData = [
@@ -433,7 +434,7 @@ const AutoSlider = ({ images }: { images: string[] }) => {
         >
           <img 
             src={images[index]} 
-            className="w-full h-full object-cover grayscale brightness-90 hover:grayscale-0 transition-all duration-[2s]"
+            className="w-full h-full object-cover brightness-95 hover:brightness-100 transition-all duration-[2s]"
             alt={`Public Work ${index + 1}`}
           />
         </motion.div>
@@ -498,44 +499,38 @@ interface GalleryItemProps {
 const GalleryItem: React.FC<GalleryItemProps> = ({ art, index, lang }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const isLeft = index % 2 === 0;
   const translatedMaterial = materialTranslations[art.materialKey]?.[lang] || art.materialKey;
 
   return (
     <motion.div 
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-      className="relative w-full"
+      transition={{ duration: 0.8, delay: index * 0.05 }}
+      className="relative group aspect-square overflow-hidden bg-[#CDC6BD]/10 rounded-sm shadow-lg"
     >
-      <div className={`flex flex-col md:flex-row items-center gap-4 md:gap-8 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-        <div className="w-full md:w-3/5">
-          <div className="overflow-hidden bg-[#CDC6BD]/10 group shadow-2xl rounded-sm">
-            <motion.img 
-              whileHover={{ scale: 1.05 }}
-              src={art.image} 
-              alt={art.title} 
-              className="w-full h-auto object-cover transition-transform duration-[2s] ease-out"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = "https://via.placeholder.com/800x1000?text=" + art.title;
-              }}
-            />
-          </div>
-        </div>
-        
-        <div className={`w-full md:w-2/5 flex flex-col justify-center ${isLeft ? 'md:items-start text-left' : 'md:items-end text-right'}`}>
-          <h4 className="text-lg md:text-xl font-bold tracking-[-0.02em] text-[#343148] leading-tight mb-1">
-            {getTitleUppercase(art.title)}
-          </h4>
-          <p className="text-[10px] md:text-[11px] text-[#343148]/60 font-medium tracking-wide mb-1">
-            {getUppercase(translatedMaterial, lang)}
-          </p>
-          <div className={`flex items-center gap-3 md:gap-4 text-[10px] md:text-[11px] text-[#E3BD33] font-normal tracking-[0.1em] ${isLeft ? 'justify-start' : 'justify-end'}`}>
-            <span>{art.dimensions}</span>
-            <span className="w-1 h-1 rounded-full bg-[#E3BD33]/30" />
-            <span>{art.year}</span>
-          </div>
+      <motion.img 
+        whileHover={{ scale: 1.1 }}
+        src={art.image} 
+        alt={art.title} 
+        className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out"
+        onError={(e) => {
+          (e.target as HTMLImageElement).src = "https://via.placeholder.com/800x800?text=" + art.title;
+        }}
+      />
+      
+      {/* Hover Overlay */}
+      <div className="absolute inset-0 bg-[#343148]/80 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-center items-center p-6 text-center backdrop-blur-sm">
+        <h4 className="text-lg font-bold tracking-tight text-[#E3BD33] leading-tight mb-2 uppercase">
+          {getTitleUppercase(art.title)}
+        </h4>
+        <p className="text-[10px] text-white/70 font-medium tracking-widest mb-3 uppercase">
+          {getUppercase(translatedMaterial, lang)}
+        </p>
+        <div className="flex items-center gap-3 text-[10px] text-white/50 font-normal tracking-[0.1em]">
+          <span>{art.dimensions}</span>
+          <span className="w-1 h-1 rounded-full bg-[#E3BD33]/30" />
+          <span>{art.year}</span>
         </div>
       </div>
     </motion.div>
@@ -648,7 +643,6 @@ const Navbar = ({ lang, setLang }: { lang: string; setLang: (l: string) => void 
 
 const App = () => {
   const [lang, setLang] = useState('tr');
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const t = translations[lang as keyof typeof translations];
   
   const { scrollY } = useScroll();
@@ -683,13 +677,13 @@ const App = () => {
             transition={{ duration: 1.5 }}
             className="relative z-20 text-center px-6 max-w-5xl"
           >
-            <h1 className={`text-4xl md:text-[5rem] lg:text-[7rem] font-bold uppercase tracking-[-0.02em] text-[#F4F5F0] drop-shadow-2xl mb-8
+            <h1 className={`text-4xl md:text-[44pt] font-bold uppercase tracking-[-0.02em] text-[#F4F5F0] drop-shadow-2xl mb-8
               ${lang === 'tr' ? 'leading-[1.0]' : 'leading-[0.9]'}`}>
               {t.manifesto.map((line, i) => (
                 <span key={i} className="block last:text-[#E3BD33]">{getUppercase(line, lang)}</span>
               ))}
             </h1>
-            <p className="text-[#F4F5F0]/70 text-[18px] tracking-[0.5em] font-medium uppercase mt-4">
+            <p className="text-[#F4F5F0]/70 text-[14px] md:text-[16px] tracking-[0.5em] font-medium uppercase mt-4">
               {getUppercase(t.heroSubtitle, lang)}
             </p>
             <motion.div 
@@ -707,7 +701,7 @@ const App = () => {
 
         {/* Section: Gallery */}
         <section id="gallery" className="py-24 md:py-32 bg-[#F4F5F0] relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-8 md:px-24 relative z-10 mb-8 md:mb-12">
+          <div className="max-w-7xl mx-auto px-8 lg:px-24 relative z-10 mb-8 md:mb-12">
             <motion.div 
                initial={{ opacity: 0, x: -60 }}
                whileInView={{ opacity: 1, x: 0 }}
@@ -715,21 +709,21 @@ const App = () => {
                className="max-w-4xl"
             >
               <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.7em] mb-4 block font-bold">{getUppercase(t.sectionLabels.collection, lang)}</span>
-              <h2 className="text-[36pt] md:text-[50pt] font-bold mb-8 text-[#343148] tracking-[-0.02em] leading-none uppercase">
+              <h2 className="text-[28pt] md:text-[40pt] font-bold mb-8 text-[#343148] tracking-[-0.02em] leading-none uppercase">
                  {t.gallery.titleLines.map((line, idx) => (
                    <span key={idx} className="block">{getUppercase(line, lang)}</span>
                  ))}
               </h2>
               <div className="flex items-start gap-8">
                 <div className="w-12 h-[1px] bg-[#E3BD33] mt-4 flex-shrink-0" />
-                <p className="text-xl md:text-2xl text-[#343148]/70 font-normal leading-relaxed max-w-2xl italic">
+                <p className="text-[12pt] md:text-[16pt] text-[#343148]/70 font-normal leading-relaxed max-w-2xl italic">
                   {t.gallery.intro}
                 </p>
               </div>
             </motion.div>
           </div>
 
-          <div className="grid grid-cols-1 w-full max-w-7xl mx-auto px-8 md:px-24 gap-y-16 md:gap-y-32 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 w-full max-w-7xl mx-auto px-8 lg:px-24 gap-8 md:gap-12 relative">
                {artworks.map((art, i) => (
                  <GalleryItem key={i} art={art} index={i} lang={lang} />
                ))}
@@ -738,8 +732,8 @@ const App = () => {
 
         {/* Section: Public Works */}
         <section id="public-works" className="py-24 md:py-48 bg-[#F4F5F0] relative overflow-hidden border-t border-[#343148]/5 px-4 md:px-8 lg:grid lg:px-12">
-          <div className="w-full max-w-[1600px] mx-auto relative z-10 border border-[#343148]/20 p-6 md:p-16 lg:p-24 rounded-sm">
-             <div className="grid md:grid-cols-2 gap-8 md:gap-24 items-center">
+          <div className="w-full max-w-[1600px] mx-auto relative z-10 border border-[#343148]/20 p-6 md:p-12 lg:p-24 rounded-sm">
+             <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                 <motion.div 
                    initial={{ opacity: 0, x: -50 }}
                    whileInView={{ opacity: 1, x: 0 }}
@@ -751,7 +745,7 @@ const App = () => {
                    </h3>
                    <div className="flex flex-col items-center md:flex-row md:items-start gap-6">
                       <div className="w-12 h-[1px] bg-[#E3BD33] md:mt-4 flex-shrink-0" />
-                      <p className="text-lg md:text-xl text-[#343148]/70 font-normal leading-relaxed italic text-center md:text-left">
+                      <p className="text-[12pt] md:text-[16pt] text-[#343148]/70 font-normal leading-relaxed italic text-center md:text-left">
                         {t.gallery.publicWorksText}
                       </p>
                    </div>
@@ -806,7 +800,7 @@ const App = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, amount: 0.5 }}
               transition={{ delay: 0.5, duration: 1.2 }}
-              className="font-normal leading-tight tracking-[0.3em] uppercase text-[20pt]"
+              className="font-normal leading-tight tracking-[0.3em] uppercase text-[14px] md:text-[16pt]"
               style={{ color: '#F4F5F0' }}
             >
               {getUppercase(t.interlude, lang)}
@@ -815,8 +809,8 @@ const App = () => {
         </section>
 
         {/* Section: About */}
-        <section id="about" className="py-48 px-8 md:px-24 bg-white relative overflow-hidden">
-          <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 items-start">
+        <section id="about" className="py-24 md:py-48 px-8 lg:px-24 bg-white relative overflow-hidden">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
             <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.2 }}>
               <div className="aspect-[3/4] bg-[#CDC6BD]/10 overflow-hidden rounded-sm shadow-2xl relative">
                 <img src="https://static.wixstatic.com/media/784d0e_7586edda0e4f4875aeceb351edeafdd6~mv2.png" className="w-full h-full object-cover grayscale brightness-95" alt="Uğur Çakı Profile" />
@@ -825,8 +819,8 @@ const App = () => {
 
             <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, delay: 0.2 }}>
               <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-bold">{getUppercase(t.sectionLabels.profile, lang)}</span>
-              <h2 className="text-[36pt] md:text-[50pt] font-bold mb-12 text-[#343148] tracking-[-0.02em] leading-none">{getUppercase(t.about.title, lang)}</h2>
-              <div className="space-y-8 text-xl font-normal leading-relaxed text-[#343148]/80">
+              <h2 className="text-[28pt] md:text-[40pt] font-bold mb-12 text-[#343148] tracking-[-0.02em] leading-none">{getUppercase(t.about.title, lang)}</h2>
+              <div className="space-y-8 text-[12pt] md:text-[16pt] font-normal leading-relaxed text-[#343148]/80">
                 <p>{t.about.bio}</p>
                 <p>{t.about.highlights}</p>
                 <p className="text-sm text-[#343148]/40 italic tracking-widest uppercase">{t.about.studios}</p>
@@ -843,91 +837,95 @@ const App = () => {
           </div>
         </section>
 
-        {/* Section: Exhibitions */}
-        <section id="exhibitions" className="py-48 px-8 md:px-24 bg-[#F4F5F0]">
-          <div className="max-w-7xl mx-auto">
-             <div className="grid md:grid-cols-2 gap-24 mb-32">
-                <div>
-                   <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-bold">{getUppercase(t.sectionLabels.exhibitions, lang)}</span>
-                   <h3 className="text-[36pt] md:text-[50pt] font-bold mb-12 text-[#343148] tracking-[-0.02em]">{getUppercase(t.exhibitions.awards, lang)}</h3>
-                   <div className="space-y-8 max-h-[700px] overflow-y-auto pr-4 scrollbar-custom">
-                      {awardsData.slice().reverse().map((award, idx) => (
-                        <div key={idx} className="border-b border-[#343148]/10 pb-6">
-                           <span className="text-[#E2552D] font-bold text-lg">{award.year}</span>
-                           <h4 className="text-xl md:text-2xl font-bold tracking-[-0.02em] mt-2 text-[#343148] leading-tight">{getTitleUppercase(award.title)}</h4>
-                           <p className="text-[#343148]/50 uppercase tracking-widest text-[9px] mt-2 font-normal">{getTitleUppercase(award.location)}</p>
-                        </div>
-                      ))}
-                   </div>
+        {/* Section: Awards & Exhibitions */}
+        <section id="exhibitions" className="bg-[#F4F5F0]">
+          {/* Block 1: Awards */}
+          <div className="py-24 md:py-48 px-8 lg:px-24 border-b border-[#343148]/5">
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
+              {/* Image Column */}
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.2 }}
+                className="lg:w-1/2"
+              >
+                <div className="aspect-[4/5] bg-[#CDC6BD]/10 overflow-hidden rounded-sm shadow-2xl relative group">
+                  <img 
+                    src="https://static.wixstatic.com/media/784d0e_07be1424f55f4771a343235609614767~mv2.webp" 
+                    className="w-full h-full object-cover brightness-90 transition-all duration-1000" 
+                    alt="Uğur Çakı Awards" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#343148]/40 to-transparent opacity-60" />
                 </div>
-                <div className="pt-0 md:pt-14">
-                   <h3 className="text-[36pt] md:text-[50pt] font-bold mb-12 text-[#343148] tracking-[-0.02em]">{getUppercase(t.nav.exhibitions, lang)}</h3>
-                   <ul className="space-y-10">
-                      <li className="flex justify-between items-end border-b border-[#343148]/5 pb-6">
-                         <span className="text-2xl font-bold tracking-[-0.02em]">{getTitleUppercase("Saatchi Gallery, London")}</span>
-                         <b className="text-[#E3BD33] font-bold">2012</b>
-                      </li>
-                      <li className="flex justify-between items-end border-b border-[#343148]/5 pb-6">
-                         <span className="text-2xl font-bold tracking-[-0.02em]">{getTitleUppercase("Elite Art Monaco")}</span>
-                         <b className="text-[#E3BD33] font-bold">2010</b>
-                      </li>
-                      <li className="flex justify-between items-end border-b border-[#343148]/5 pb-6">
-                         <span className="text-2xl font-bold tracking-[-0.02em]">{getTitleUppercase("New York Biennale")}</span>
-                         <b className="text-[#E3BD33] font-bold">2013</b>
-                      </li>
-                   </ul>
+              </motion.div>
+
+              {/* Content Column */}
+              <div className="lg:w-1/2 flex flex-col justify-center">
+                <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-bold">{getUppercase(t.sectionLabels.exhibitions, lang)}</span>
+                <h3 className="text-[28pt] md:text-[40pt] font-bold mb-12 text-[#343148] tracking-[-0.02em] leading-tight uppercase">{getUppercase(t.exhibitions.awards, lang)}</h3>
+                <div className="space-y-8 max-h-[600px] overflow-y-auto pr-4 scrollbar-custom">
+                  {awardsData.slice().reverse().map((award, idx) => (
+                    <div key={idx} className="border-b border-[#343148]/10 pb-6">
+                      <span className="text-[#E2552D] font-bold text-lg">{award.year}</span>
+                      <h4 className="text-[14pt] md:text-2xl font-bold tracking-[-0.02em] mt-2 text-[#343148] leading-tight">{getTitleUppercase(award.title)}</h4>
+                      <p className="text-[#343148]/50 uppercase tracking-widest text-[9px] mt-2 font-normal">{getTitleUppercase(award.location)}</p>
+                    </div>
+                  ))}
                 </div>
-             </div>
+              </div>
+            </div>
+          </div>
 
-             <div className="pt-20 border-t border-[#343148]/5">
-                <button 
-                  onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-                  className="w-full flex items-center justify-between group py-4"
-                >
-                  <h3 className="text-3xl md:text-4xl font-bold tracking-[-0.02em] text-[#343148] group-hover:text-[#E3BD33] transition-colors">
-                    {isHistoryOpen ? getUppercase(t.exhibitions.hideHistory, lang) : getUppercase(t.exhibitions.viewFullHistory, lang)}
-                  </h3>
-                  <div className={`p-4 rounded-full border border-[#343148]/10 group-hover:border-[#E3BD33] transition-all ${isHistoryOpen ? 'rotate-180' : ''}`}>
-                    <ChevronDown size={28} />
-                  </div>
-                </button>
+          {/* Block 2: Past Exhibitions */}
+          <div className="py-24 md:py-48 px-8 lg:px-24">
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row-reverse gap-16 lg:gap-24">
+              {/* Image Column */}
+              <motion.div 
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.2 }}
+                className="lg:w-1/2"
+              >
+                <div className="aspect-[4/5] bg-[#CDC6BD]/10 overflow-hidden rounded-sm shadow-2xl relative group">
+                  <img 
+                    src="https://static.wixstatic.com/media/784d0e_6a4f4fc6bdc94e22a208eff72f967bdf~mv2.webp" 
+                    className="w-full h-full object-cover brightness-90 transition-all duration-1000" 
+                    alt="Uğur Çakı Past Exhibitions" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#343148]/40 to-transparent opacity-60" />
+                </div>
+              </motion.div>
 
-                <AnimatePresence>
-                  {isHistoryOpen && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16 py-20">
-                        {exhibitionHistoryData.slice().reverse().map((group, idx) => (
-                          <div key={idx} className="space-y-6">
-                            <h4 className="text-3xl font-bold text-[#E3BD33] border-b border-[#E3BD33]/30 pb-4 inline-block">{group.year}</h4>
-                            <ul className="space-y-4">
-                              {group.events.map((event, eIdx) => (
-                                <li key={eIdx} className="text-[#343148]/80 text-xs md:text-sm font-normal leading-relaxed">• {event}</li>
-                              ))}
-                            </ul>
-                          </div>
+              {/* Content Column */}
+              <div className="lg:w-1/2">
+                <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-bold">{getUppercase(t.nav.exhibitions, lang)}</span>
+                <h3 className="text-[28pt] md:text-[40pt] font-bold mb-12 text-[#343148] tracking-[-0.02em] leading-tight uppercase">{getUppercase(t.exhibitions.viewFullHistory, lang)}</h3>
+                
+                <div className="space-y-12 max-h-[800px] overflow-y-auto pr-8 scrollbar-custom">
+                  {exhibitionHistoryData.slice().reverse().map((group, idx) => (
+                    <div key={idx} className="space-y-6">
+                      <h4 className="text-[13.5pt] md:text-2xl font-bold text-[#E3BD33] border-b border-[#E3BD33]/30 pb-4 inline-block">{group.year}</h4>
+                      <ul className="space-y-4">
+                        {group.events.map((event, eIdx) => (
+                          <li key={eIdx} className="text-[#343148]/80 text-[12pt] md:text-sm font-normal leading-relaxed">• {event}</li>
                         ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-             </div>
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Section: Contact */}
-        <section id="contact" className="py-48 px-8 md:px-24 bg-[#343148] text-white relative overflow-hidden">
+        <section id="contact" className="py-24 md:py-48 px-8 lg:px-24 bg-[#343148] text-white relative overflow-hidden">
           <FloatingSquares />
           
-          <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 relative z-20">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 relative z-20">
             <div>
               <span className="text-[#E3BD33] text-[11px] uppercase tracking-[0.8em] mb-8 block font-bold">{getUppercase(t.sectionLabels.contact, lang)}</span>
-              <h2 className="text-[36pt] md:text-[50pt] font-bold mb-16 tracking-[-0.02em] leading-none">{getUppercase(t.contact.title, lang)}</h2>
+              <h2 className="text-[28pt] md:text-[40pt] font-bold mb-16 tracking-[-0.02em] leading-none">{getUppercase(t.contact.title, lang)}</h2>
               <div className="space-y-12">
                 <div>
                   <p className="text-3xl md:text-4xl font-bold text-[#E3BD33] mb-4">{t.contact.manager}</p>
@@ -941,8 +939,14 @@ const App = () => {
                   </div>
                 </div>
                 <div className="flex space-x-10 pt-10">
-                  <a href="#" className="hover:text-[#E3BD33] transition-colors"><Instagram size={36} /></a>
-                  <a href="#" className="hover:text-[#E3BD33] transition-colors"><Globe size={36} /></a>
+                  <a 
+                    href="https://www.instagram.com/ugurcaki/" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:text-[#E3BD33] transition-colors"
+                  >
+                    <Instagram size={36} />
+                  </a>
                 </div>
               </div>
             </div>
