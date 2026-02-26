@@ -210,6 +210,7 @@ const translations = {
       awards: "Ödüller",
       history: "Sergi Geçmişi",
       viewFullHistory: "Geçmiş Sergiler",
+      upcoming: "Gelecek Sergiler",
       hideHistory: "Gizle"
     },
     contact: {
@@ -247,6 +248,7 @@ const translations = {
       awards: "Awards",
       history: "Exhibition History",
       viewFullHistory: "View Full History",
+      upcoming: "Upcoming Exhibitions",
       hideHistory: "Hide"
     },
     contact: {
@@ -284,6 +286,7 @@ const translations = {
       awards: "Prix",
       history: "Historique",
       viewFullHistory: "Voir l'historique complet",
+      upcoming: "Expositions à Venir",
       hideHistory: "Masquer"
     },
     contact: {
@@ -827,11 +830,13 @@ const App = () => {
               </div>
               
               <div className="mt-20 pt-16 border-t border-[#343148]/10 italic relative">
-                 <h4 className="text-[11px] uppercase tracking-[0.5em] text-[#E3BD33] mb-8 font-bold">{getUppercase(t.about.quoteTitle, lang)}</h4>
+                 <div className="flex items-center gap-4 mb-8">
+                   <div className="w-12 h-[2px] bg-[#E3BD33]" />
+                   <h4 className="text-[11px] uppercase tracking-[0.5em] text-[#E3BD33] font-bold">{getUppercase(t.about.quoteTitle, lang)}</h4>
+                 </div>
                  <p className="text-4xl md:text-5xl font-bold tracking-[-0.02em] text-[#343148] leading-tight">
                    {t.about.quote}
                  </p>
-                 <div className="absolute top-16 left-0 w-12 h-[2px] bg-[#E3BD33]" />
               </div>
             </motion.div>
           </div>
@@ -913,6 +918,39 @@ const App = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Block 3: Upcoming Exhibitions */}
+          <div className="py-24 md:py-48 px-8 lg:px-24 bg-white">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-16">
+                <span className="text-[#E2552D] text-[11px] uppercase tracking-[0.6em] mb-6 block font-bold">{getUppercase(t.nav.exhibitions, lang)}</span>
+                <h3 className="text-[28pt] md:text-[40pt] font-bold text-[#343148] tracking-[-0.02em] leading-tight uppercase">{getUppercase(t.exhibitions.upcoming, lang)}</h3>
+                <div className="w-24 h-px bg-[#E3BD33] mx-auto mt-8 opacity-40" />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  "https://static.wixstatic.com/media/784d0e_3f37aa0ea6494c5ca24d4b7ca94558d6~mv2.webp",
+                  "https://static.wixstatic.com/media/784d0e_cb16deeb65c9496da8d749edb3d0deee~mv2.webp",
+                  "https://static.wixstatic.com/media/784d0e_6466cfdc87c2482285cb138295c6f32c~mv2.webp"
+                ].map((img, idx) => (
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: idx * 0.2 }}
+                    className="aspect-[3/4] overflow-hidden rounded-sm shadow-xl bg-[#CDC6BD]/10"
+                  >
+                    <img 
+                      src={img} 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" 
+                      alt={`Upcoming Exhibition ${idx + 1}`} 
+                    />
+                  </motion.div>
+                ))}
               </div>
             </div>
           </div>
